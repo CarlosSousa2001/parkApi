@@ -22,21 +22,22 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> findAll(){
+    public ResponseEntity<List<Usuario>> findAll() {
         List list = usuarioService.findAll();
         return ResponseEntity.ok().body(list);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> findById(@PathVariable UUID id){
+    public ResponseEntity<Usuario> findById(@PathVariable UUID id) {
         Usuario usuario = usuarioService.findById(id);
-        if(usuario != null){
+        if (usuario != null) {
             return ResponseEntity.ok().body(usuario);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody Usuario usuario){
+    public ResponseEntity<String> createUser(@RequestBody Usuario usuario) {
         String result = usuarioService.createUser(usuario);
 
         if (result.startsWith("Usuário criado")) {
@@ -45,5 +46,10 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(result);
         }
 
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<Usuario> updatePassword(@PathVariable UUID id, @RequestBody Usuario usuario) {
+        Usuario user = usuarioService.updatePassword(id, usuario.getPassword());
+        return ResponseEntity.ok(user);
     }
 }

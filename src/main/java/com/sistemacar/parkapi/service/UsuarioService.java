@@ -39,4 +39,11 @@ public class UsuarioService {
         }
         return "Erro ao criar usuário";
     }
+
+    @Transactional
+    public Usuario updatePassword(UUID id, String password) {
+        Usuario user = findById(id);
+        user.setPassword(password);
+        return user;
+    }
 }

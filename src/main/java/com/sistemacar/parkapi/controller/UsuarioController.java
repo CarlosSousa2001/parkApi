@@ -1,5 +1,8 @@
 package com.sistemacar.parkapi.controller;
 
+import com.sistemacar.parkapi.DTO.UsuarioCreateDTO;
+import com.sistemacar.parkapi.DTO.UsuarioResponseDTO;
+import com.sistemacar.parkapi.DTO.mapper.UsuarioMapper;
 import com.sistemacar.parkapi.entity.Usuario;
 import com.sistemacar.parkapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +40,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody Usuario usuario) {
-        String result = usuarioService.createUser(usuario);
-
-        if (result.startsWith("Usuário criado")) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+    public ResponseEntity<UsuarioResponseDTO> createUser(@RequestBody UsuarioCreateDTO usuarioCreateDTO) {
+        Usuario user = usuarioService.createUser(UsuarioMapper.toUsuario(usuarioCreateDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
 
     }
+
     @PatchMapping("/{id}")
     public ResponseEntity<Usuario> updatePassword(@PathVariable UUID id, @RequestBody Usuario usuario) {
         Usuario user = usuarioService.updatePassword(id, usuario.getPassword());

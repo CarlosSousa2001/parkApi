@@ -32,12 +32,8 @@ public class UsuarioService {
         return null;
     }
     @Transactional(readOnly = true) // apenas metodo de consulta
-    public String createUser(Usuario usuario){
-        if(usuario != null) {
-            usuarioRepository.save(usuario);
-            return "Usuário criado com sucesso";
-        }
-        return "Erro ao criar usuário";
+    public Usuario createUser(Usuario usuario){
+      return usuarioRepository.save(usuario);
     }
 
     @Transactional

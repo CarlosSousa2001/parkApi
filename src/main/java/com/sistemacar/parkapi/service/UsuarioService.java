@@ -20,4 +20,12 @@ public class UsuarioService {
     public List<Usuario> findAll(){
         return usuarioRepository.findAll();
     }
+
+    public String createUser(Usuario usuario){
+        if(usuario != null) {
+            usuarioRepository.save(usuario);
+            return "Usuário criado com sucesso";
+        }
+        return "Erro ao criar usuário";
+    }
 }

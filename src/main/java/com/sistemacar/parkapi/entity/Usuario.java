@@ -19,7 +19,7 @@ public class Usuario implements Serializable {
     private UUID id;
     @Column(name = "username", nullable = false,unique = true,length = 100)
     private String username;
-    @Column(name = "username", nullable = false,length = 255)
+    @Column(name = "password", nullable = false,length = 255)
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;

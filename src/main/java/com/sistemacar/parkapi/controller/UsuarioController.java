@@ -31,10 +31,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> findById(@PathVariable UUID id) {
+    public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable UUID id) {
         Usuario usuario = usuarioService.findById(id);
         if (usuario != null) {
-            return ResponseEntity.ok().body(usuario);
+            return ResponseEntity.ok().body(UsuarioMapper.toDto(usuario));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

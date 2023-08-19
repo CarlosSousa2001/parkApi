@@ -20,6 +20,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    @Transactional(readOnly = true) // apenas metodo de consulta
     public List<Usuario> findAll(){
         return usuarioRepository.findAll();
     }
@@ -31,15 +32,21 @@ public class UsuarioService {
         }
         return null;
     }
-    @Transactional(readOnly = true) // apenas metodo de consulta
+    @Transactional
     public Usuario createUser(Usuario usuario){
       return usuarioRepository.save(usuario);
     }
 
     @Transactional
-    public Usuario updatePassword(UUID id, String password) {
+    public Usuario updatePassword(UUID id, String senhaAtual, String novaSenha, String confirmarSenha) {
+        if(!novaSenha.equals(confirmarSenha)){
+            throw new RuntimeException("A senha precisa ser igual");
+        }
         Usuario user = findById(id);
-        user.setPassword(password);
+        if(!senhaAtual.equals(user.getPassword())){
+            throw new RuntimeException("A senha incorreta");
+        }
+        user.setPassword(novaSenha);
         return user;
     }
 }

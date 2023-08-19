@@ -2,6 +2,7 @@ package com.sistemacar.parkapi.controller;
 
 import com.sistemacar.parkapi.DTO.UsuarioCreateDTO;
 import com.sistemacar.parkapi.DTO.UsuarioResponseDTO;
+import com.sistemacar.parkapi.DTO.UsuarioSenhaDTO;
 import com.sistemacar.parkapi.DTO.mapper.UsuarioMapper;
 import com.sistemacar.parkapi.entity.Usuario;
 import com.sistemacar.parkapi.service.UsuarioService;
@@ -25,9 +26,9 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> findAll() {
-        List list = usuarioService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<UsuarioResponseDTO>> findAll() {
+        List<Usuario> users = usuarioService.findAll();
+        return ResponseEntity.ok(UsuarioMapper.toListDto(users));
     }
 
     @GetMapping("/{id}")
@@ -47,8 +48,8 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Usuario> updatePassword(@PathVariable UUID id, @RequestBody Usuario usuario) {
-        Usuario user = usuarioService.updatePassword(id, usuario.getPassword());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UsuarioResponseDTO> updatePassword(@PathVariable UUID id, @RequestBody UsuarioSenhaDTO usuarioSenhaDTO) {
+        Usuario user = usuarioService.updatePassword(id, usuarioSenhaDTO.getSenhaAtual(), usuarioSenhaDTO.getNovaSenha(), usuarioSenhaDTO.getConfirmarSenha());
+        return ResponseEntity.ok(UsuarioMapper.toDto(user));
     }
 }

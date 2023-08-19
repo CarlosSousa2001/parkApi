@@ -6,6 +6,7 @@ import com.sistemacar.parkapi.DTO.UsuarioSenhaDTO;
 import com.sistemacar.parkapi.DTO.mapper.UsuarioMapper;
 import com.sistemacar.parkapi.entity.Usuario;
 import com.sistemacar.parkapi.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,14 +42,14 @@ public class UsuarioController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UsuarioResponseDTO> createUser(@RequestBody UsuarioCreateDTO usuarioCreateDTO) {
+    public ResponseEntity<UsuarioResponseDTO> createUser(@Valid @RequestBody UsuarioCreateDTO usuarioCreateDTO) {
         Usuario user = usuarioService.createUser(UsuarioMapper.toUsuario(usuarioCreateDTO));
         return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
 
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> updatePassword(@PathVariable UUID id, @RequestBody UsuarioSenhaDTO usuarioSenhaDTO) {
+    public ResponseEntity<UsuarioResponseDTO> updatePassword(@Valid @PathVariable UUID id, @RequestBody UsuarioSenhaDTO usuarioSenhaDTO) {
         Usuario user = usuarioService.updatePassword(id, usuarioSenhaDTO.getSenhaAtual(), usuarioSenhaDTO.getNovaSenha(), usuarioSenhaDTO.getConfirmarSenha());
         return ResponseEntity.ok(UsuarioMapper.toDto(user));
     }

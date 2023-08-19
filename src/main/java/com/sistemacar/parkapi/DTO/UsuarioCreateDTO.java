@@ -1,12 +1,16 @@
 package com.sistemacar.parkapi.DTO;
 
-import jakarta.persistence.Column;
-
-import java.util.UUID;
+import jakarta.validation.constraints.*;
 
 public class UsuarioCreateDTO {
 
+    //@NotEmpty // se estiver vazio ou estiver null;
+    @NotBlank // verifica se é null, se esta vazio, se possui ao menos 1 caractere
+    @Email(message = "Formato do e-mail está inválido")
+    @Size(max = 60)
     private String username;
+    @NotBlank
+    @Size(min = 6, max = 80)
     private String password;
 
     public UsuarioCreateDTO(){}

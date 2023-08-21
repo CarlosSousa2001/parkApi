@@ -8,6 +8,7 @@ import com.sistemacar.parkapi.entity.Usuario;
 import com.sistemacar.parkapi.exception.ErrorMessage;
 import com.sistemacar.parkapi.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,6 +34,14 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    @Operation(summary = "Listar todos os usuários",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDTO.class)))),
+                    @ApiResponse(responseCode = "404", description = "Recuso não encontrado",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> findAll() {
         List<Usuario> users = usuarioService.findAll();

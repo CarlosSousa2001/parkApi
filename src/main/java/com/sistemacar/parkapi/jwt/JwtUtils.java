@@ -1,4 +1,7 @@
 package com.sistemacar.parkapi.jwt;
+import com.sun.tools.jconsole.JConsoleContext;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -44,5 +47,26 @@ public class JwtUtils {
                 .claim("role", role)
                 .compact();
         return new JwtToken(token);
+    }
+    public  static Claims getClaimsFromToken(String token){ // recuperar conteudo do token
+        try{
+            return Jwts.parserBuilder()
+                    .setSigningKey(generateKey()).build()
+                    .parseClaimsJws(refactorToken(token)).getBody();
+        }catch (JwtException ex){
+            System.out.println("Token invalido: " + ex.getMessage());
+        }
+        return null;
+    }
+
+    public static String getUsernameFromToken(String token){
+        return getClaimsFromToken(token).getSubject();
+    }
+ 
+    private static String refactorToken(String token){
+        if(token.contains(JWT_BEARER)){
+            return token.substring(JWT_BEARER.length());
+        }
+        return token;
     }
 }

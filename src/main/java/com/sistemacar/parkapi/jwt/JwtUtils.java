@@ -1,4 +1,5 @@
 package com.sistemacar.parkapi.jwt;
+
 import com.sun.tools.jconsole.JConsoleContext;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -21,12 +22,14 @@ public class JwtUtils {
     public static final long EXPIRE_HOURS = 0;
     public static final long EXPIRE_MINUTES = 2;
 
-    private JwtUtils(){}
+    private JwtUtils() {
+    }
 
-    private static Key generateKey(){
+    private static Key generateKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
-    private static Date toExpireDate(Date start){
+
+    private static Date toExpireDate(Date start) {
         LocalDateTime dateTime = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         LocalDateTime end = dateTime.plusDays(EXPIRE_DAYS).plusHours(EXPIRE_HOURS).plusMinutes(EXPIRE_MINUTES);
@@ -34,7 +37,7 @@ public class JwtUtils {
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static JwtToken createToken(String username, String role){
+    public static JwtToken createToken(String username, String role) {
         Date issuedAt = new Date();
         Date limit = toExpireDate(issuedAt);
 
@@ -48,23 +51,36 @@ public class JwtUtils {
                 .compact();
         return new JwtToken(token);
     }
-    public  static Claims getClaimsFromToken(String token){ // recuperar conteudo do token
-        try{
+
+    public static Claims getClaimsFromToken(String token) { // recuperar conteudo do token
+        try {
             return Jwts.parserBuilder()
                     .setSigningKey(generateKey()).build()
                     .parseClaimsJws(refactorToken(token)).getBody();
-        }catch (JwtException ex){
+        } catch (JwtException ex) {
             System.out.println("Token invalido: " + ex.getMessage());
         }
         return null;
     }
 
-    public static String getUsernameFromToken(String token){
+    public static String getUsernameFromToken(String token) {
         return getClaimsFromToken(token).getSubject();
     }
- 
-    private static String refactorToken(String token){
-        if(token.contains(JWT_BEARER)){
+
+    public static boolean isTokenValid(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(generateKey()).build()
+                    .parseClaimsJws(refactorToken(token));
+            return true;
+        } catch (JwtException ex) {
+            System.out.println("Token invalido: " + ex.getMessage());
+        }
+        return false;
+    }
+
+    private static String refactorToken(String token) {
+        if (token.contains(JWT_BEARER)) {
             return token.substring(JWT_BEARER.length());
         }
         return token;

@@ -1,4 +1,6 @@
 package com.sistemacar.parkapi.jwt;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import java.nio.charset.StandardCharsets;
@@ -27,5 +29,20 @@ public class JwtUtils {
         LocalDateTime end = dateTime.plusDays(EXPIRE_DAYS).plusHours(EXPIRE_HOURS).plusMinutes(EXPIRE_MINUTES);
 
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static JwtToken createToken(String username, String role){
+        Date issuedAt = new Date();
+        Date limit = toExpireDate(issuedAt);
+
+        String token = Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setSubject(username)
+                .setIssuedAt(issuedAt)
+                .setExpiration(limit)
+                .signWith(generateKey(), SignatureAlgorithm.HS256)
+                .claim("role", role)
+                .compact();
+        return new JwtToken(token);
     }
 }

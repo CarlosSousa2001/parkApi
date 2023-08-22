@@ -1,9 +1,11 @@
 package com.sistemacar.parkapi.service;
 
 import com.sistemacar.parkapi.entity.Usuario;
+import com.sistemacar.parkapi.enums.Role;
 import com.sistemacar.parkapi.exception.EntityExistsException;
 import com.sistemacar.parkapi.exception.UserNameUniqueViolationException;
 import com.sistemacar.parkapi.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -57,5 +59,15 @@ public class UsuarioService {
         }
         user.setPassword(novaSenha);
         return user;
+    }
+    @Transactional(readOnly = true) // apenas metodo de consulta
+    public Usuario buscarPorUsername(String username) {
+        return usuarioRepository.findByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Usuário não encontrado"))
+        );
+    }
+
+    public Role buscarRolePorUsername(String username) {
+        return usuarioRepository.findRoleByUsername(username);
     }
 }

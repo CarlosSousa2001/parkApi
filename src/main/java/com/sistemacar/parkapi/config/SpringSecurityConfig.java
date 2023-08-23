@@ -1,5 +1,6 @@
 package com.sistemacar.parkapi.config;
 
+import com.sistemacar.parkapi.jwt.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableMethodSecurity
@@ -24,12 +27,20 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable()) // metodo desabilita formulario de login padrao
                 .httpBasic(basic ->basic.disable())
-                .authorizeHttpRequests(auth ->auth
-                        .requestMatchers(HttpMethod.POST, "/usuarios/create").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(new AntPathRequestMatcher("/usuarios/create")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth")).permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                ).addFilterBefore(
+                    jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
                 ).build();
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter(){
+        return new JwtAuthorizationFilter();
     }
     @Bean
     public PasswordEncoder passwordEncoder(){

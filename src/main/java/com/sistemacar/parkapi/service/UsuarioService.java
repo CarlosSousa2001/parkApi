@@ -8,6 +8,7 @@ import com.sistemacar.parkapi.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -42,6 +45,7 @@ public class UsuarioService {
     @Transactional
     public Usuario createUser(Usuario usuario) {
         try {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             return usuarioRepository.save(usuario);
         } catch (org.springframework.dao.DataIntegrityViolationException ex){
             throw new UserNameUniqueViolationException(String.format("Username '%s' já cadastrado", usuario.getUsername()));
@@ -54,10 +58,10 @@ public class UsuarioService {
             throw new RuntimeException("A senha precisa ser igual");
         }
         Usuario user = findById(id);
-        if (!senhaAtual.equals(user.getPassword())) {
+        if (!passwordEncoder.matches(senhaAtual, user.getPassword())) {
             throw new RuntimeException("A senha incorreta");
         }
-        user.setPassword(novaSenha);
+        user.setPassword(passwordEncoder.encode(novaSenha));
         return user;
     }
     @Transactional(readOnly = true) // apenas metodo de consulta

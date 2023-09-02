@@ -28,7 +28,7 @@ public class SpringSecurityConfig {
                 .formLogin(form -> form.disable()) // metodo desabilita formulario de login padrao
                 .httpBasic(basic ->basic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/usuarios/create")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/usuarios/*")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/auth")).permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(

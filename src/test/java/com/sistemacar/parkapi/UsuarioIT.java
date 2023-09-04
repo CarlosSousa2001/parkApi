@@ -2,6 +2,7 @@ package com.sistemacar.parkapi;
 
 import com.sistemacar.parkapi.DTO.UsuarioCreateDTO;
 import com.sistemacar.parkapi.DTO.UsuarioResponseDTO;
+import com.sistemacar.parkapi.DTO.UsuarioSenhaDTO;
 import com.sistemacar.parkapi.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +124,22 @@ public class UsuarioIT {
 
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+
+    }
+
+    @Test
+    public void EditarSenha_ComDadosValidos_RetornarStatus204(){
+        UsuarioResponseDTO responseBody = testClient
+                .patch()
+                .uri("/usuarios/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDTO("123456", "1234567", "1234567"))
+                .exchange()
+                .expectStatus().isEqualTo(204)
+                .expectBody(UsuarioResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
 
     }
 }
